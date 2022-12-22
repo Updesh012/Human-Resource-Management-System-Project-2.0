@@ -1,5 +1,6 @@
 package com.masai.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,6 +8,8 @@ import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.masai.Enum.LeaveStatus;
@@ -32,7 +35,10 @@ public class LeaveServiceImpl implements LeaveService{
 	
 	@Override
 	@Transactional
-	public LeaveDto addLeave(Integer empId, Leave leave) throws EmployeeException, LeaveException {
+	public LeaveDto addLeave(Leave leave) throws EmployeeException, LeaveException {
+		
+		// getting currently loggedIn employee Id
+		Integer empId = getEmployee().getEmployeeId();
 	
 		// this will check whether employee is exist or not
 		Employee employee = employeeRepo.findById(empId)
@@ -64,9 +70,6 @@ public class LeaveServiceImpl implements LeaveService{
 			
 		}
 			
-			
-				
-		
 		// this is custom query it will find the difference between latest accepted leave request and current date if it will come negative
 		// it means employee are on leave and he can not apply for leave.
 		
@@ -89,7 +92,11 @@ public class LeaveServiceImpl implements LeaveService{
 	
 	// this method will update the pending leave request only
 	@Override
-	public LeaveDto updateLeave(Integer empId, Leave leave) throws EmployeeException, LeaveException {
+	public LeaveDto updateLeave(Leave leave) throws EmployeeException, LeaveException {
+		
+		// getting currently loggedIn employee Id
+		Integer empId = getEmployee().getEmployeeId();
+			
 		
 		Employee employee = employeeRepo.findById(empId).orElseThrow(() -> new EmployeeException("employee does not exist with this Id"));
 		
@@ -134,7 +141,11 @@ public class LeaveServiceImpl implements LeaveService{
 	// this will delete the leave request those have the status pending
 	@Override
 	@Transactional
-	public LeaveDto deletePendingLeave(Integer empId) throws EmployeeException, LeaveException {
+	public LeaveDto deletePendingLeave() throws EmployeeException, LeaveException {
+		
+		// getting currently loggedIn employee Id
+		Integer empId = getEmployee().getEmployeeId();
+			
 		
 		Employee employee = employeeRepo.findById(empId).orElseThrow(() -> new EmployeeException("employee does not exist with this Id"));
 		
@@ -171,7 +182,11 @@ public class LeaveServiceImpl implements LeaveService{
 	// this method will return the latest leave status
 	@Override
 	@Transactional
-	public LeaveDto checkLatestLeaveStatus(Integer empId) throws EmployeeException, LeaveException {
+	public LeaveDto checkLatestLeaveStatus() throws EmployeeException, LeaveException {
+		
+		// getting currently loggedIn employee Id
+		Integer empId = getEmployee().getEmployeeId();
+			
 		
 		Employee employee = employeeRepo.findById(empId).orElseThrow(() -> new EmployeeException("employee does not exist with this Id"));
 		
@@ -219,6 +234,130 @@ public class LeaveServiceImpl implements LeaveService{
 		return modelMapper.map(leave, LeaveDto.class);
 		
 	}
+	
+	// this method will give all leaves of a particular user 
+	@Override
+	public List<LeaveDto> getAllLeaves() throws EmployeeException, LeaveException {
+		
+		// getting currently loggedIn employee Id
+		Integer empId = getEmployee().getEmployeeId();
+					
+		Employee employee = employeeRepo.findById(empId).orElseThrow(() -> new EmployeeException("employee does not exist with this Id"));
+				
+		// gives all the leaves of that employee
+		List<Leave> getAllLeaves = employee.getLeaves();
+		
+		if(getAllLeaves.isEmpty())
+					throw new LeaveException("No leaves found...");
+		
+	
+
+
+		
+		List<LeaveDto> dtoList = new ArrayList<>();
+		
+		for(Leave leave : getAllLeaves) {
+			dtoList.add(modelMapper.map(leave, LeaveDto.class));
+		}
+		
+		return dtoList;
+		
+	}
+	
+	
+	
+	@Override
+	public Employee getEmployee() {
+		
+		Object o = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		UserDetails userDetails = (UserDetails)o;
+		
+		String username = userDetails.getUsername();
+		
+		return employeeRepo.findByUserName(username).orElseThrow(() -> new RuntimeException("user does not exist")); 
+		
+		
+	}
+	
+
+
+	@Override
+	public List<LeaveDto> getAllLeavesHistory() throws LeaveException {
+		
+		List<Leave> leaves = leaveRepo.findAll();
+		
+		if(leaves.isEmpty()) throw new LeaveException("No leave Found...");
+		
+		List<LeaveDto> dtoList = new ArrayList<>();
+		
+		for(Leave leave : leaves) {
+			dtoList.add(modelMapper.map(leave, LeaveDto.class));
+		}
+		
+		return dtoList;
+	}
+
+
+	@Override
+	public List<LeaveDto> getLeavesOfParticularEmployee(Integer empId) throws LeaveException, EmployeeException {
+		
+		Employee employee = employeeRepo.findById(empId)
+										.orElseThrow(() -> new EmployeeException("Employee does not exist with this Id"));
+		
+		List<Leave> leaves = employee.getLeaves();
+		
+		if(leaves.isEmpty()) throw new LeaveException("No leaves Found...");
+		
+		List<LeaveDto> dtoList = new ArrayList<>();
+		
+		for(Leave leave : leaves) {
+			dtoList.add(modelMapper.map(leave, LeaveDto.class));
+		}
+		
+		return dtoList;
+		
+	}
+
+
+	@Override
+	public List<LeaveDto> getPendingLeaves() throws LeaveException {
+		
+		List<LeaveDto> dtoList = getAllLeavesHistory();
+		
+		if(dtoList.isEmpty()) throw new LeaveException("no leaves found...");
+		
+		return dtoList.stream()
+					  .filter((dto) -> dto.getStatus() == LeaveStatus.PENDING)
+					  .collect(Collectors.toList());
+		
+	}
+
+
+	@Override
+	@Transactional
+	public LeaveDto responseToLeave(Integer leaveId,LeaveStatus status) throws LeaveException {
+	
+		Leave leave = leaveRepo.findById(leaveId).orElseThrow(() -> new LeaveException("No leave found with this Id"));
+		
+		if(leave.getStatus() != LeaveStatus.PENDING)
+						throw new LeaveException("You have already responded...");
+		
+		Integer dayDiff = leaveRepo.getDaysDiff(leave.getLeaveId());
+		
+		if(dayDiff <0) {
+			leaveRepo.myDeleteMethod(leave.getLeaveId());
+			throw new LeaveException("leave has expired...");
+		}
+		
+		leave.setStatus(status);
+		
+		leaveRepo.save(leave);
+		
+		return modelMapper.map(leave,LeaveDto.class);
+	}
+
+
 		
 		
 	

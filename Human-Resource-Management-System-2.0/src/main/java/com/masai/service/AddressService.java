@@ -5,15 +5,18 @@ import java.util.List;
 import com.masai.exception.AddressException;
 import com.masai.exception.EmployeeException;
 import com.masai.model.Address;
+import com.masai.model.Employee;
 
 public interface AddressService {
 
-	public Address addAddress(Integer empId, Address address) throws EmployeeException;
+	public Employee getEmployee();
 	
-	public List<Address> getAllAddresses(Integer empId) throws AddressException,EmployeeException;
+	public Address addAddress(Address address) throws EmployeeException;
 	
-	public Address updateAddress(Integer empId,Integer addressId ,Address address) throws AddressException,EmployeeException;
+	public List<Address> getAllAddresses() throws AddressException,EmployeeException;
 	
-	public Address deleteAddress(Integer empId, Integer addressId) throws AddressException,EmployeeException;
+	public Address updateAddress(Integer addressId ,Address address) throws AddressException,EmployeeException;
+	
+	public Address deleteAddress(Integer addressId) throws AddressException,EmployeeException;
 	
 }

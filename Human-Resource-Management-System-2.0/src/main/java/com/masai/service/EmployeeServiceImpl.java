@@ -5,18 +5,27 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.masai.Enum.EmployeeOrAdmin;
 import com.masai.Enum.Role;
 import com.masai.dto.AddEmployeeDto;
+import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.GetEmployeeDto;
+import com.masai.dto.LoginDto;
 import com.masai.exception.DepartmentException;
 import com.masai.exception.EmployeeException;
 import com.masai.model.Department;
 import com.masai.model.Employee;
 import com.masai.repository.DepartmentRepository;
 import com.masai.repository.EmployeeRepository;
+import com.masai.security.TokenGenerator;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
@@ -30,7 +39,32 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Autowired
 	private DepartmentRepository departmentRepo;
 	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private TokenGenerator tokenGenerator;
+	
+	@Autowired
+	private PasswordEncoder encoder;
+	
 	//////////////////////////////////////////////////////////////////////////////////
+	
+	// login functionality...
+	@Override
+	public AuthenticatedResponseDto login(LoginDto loginDto) {
+		
+		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName(), loginDto.getPassword()));
+		
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+		String token = tokenGenerator.generateToken(authentication);
+		
+		return new AuthenticatedResponseDto(token);
+	}
+
+	
+	
 	
 	// this method will registered employee as well as add employee in particular department. 
 	
@@ -48,7 +82,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 		Integer employeeId = empObj.getEmployeeId();
 		empObj.setEmployeeOrAdmin(EmployeeOrAdmin.EMPLOYEE);
 		empObj.setUserName(empObj.getName()+""+employeeId);
-		empObj.setPassword(empObj.getName()+""+employeeId);
+		empObj.setPassword(encoder.encode(empObj.getName()+""+employeeId));
 		
 		Employee employeeObj = employeeRepo.save(empObj);
 		
@@ -65,7 +99,8 @@ public class EmployeeServiceImpl implements EmployeeService{
 		 Employee employee = employeeRepo.findById(employeeId)
 				 					     .orElseThrow(() -> new EmployeeException("Employee does not exist with this Id..."));
 		 
-		
+		 if(employee.getEmployeeOrAdmin() != EmployeeOrAdmin.EMPLOYEE)
+			 						throw new EmployeeException("Employee does not exist with this Id...");
 		 
 		 GetEmployeeDto getEmployeeDto = modelMapper.map(employee, GetEmployeeDto.class);
 		 
@@ -80,11 +115,16 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public GetEmployeeDto getEmployeeByEmpUserName(String userName) throws EmployeeException {
 		
-		Employee employee = employeeRepo.findByUserName(userName);
+		Employee employee = employeeRepo.findByUserName(userName).get();
 		
 		if(employee == null)
 				throw new EmployeeException("No employee found with this userName");
 		else {
+			
+		if(employee.getEmployeeOrAdmin() != EmployeeOrAdmin.EMPLOYEE)
+					throw new EmployeeException("Employee does not exist with this Id...");
+
+			
 			 GetEmployeeDto getEmployeeDto = modelMapper.map(employee, GetEmployeeDto.class);
 			 
 			 getEmployeeDto.setDepartmentId(employee.getDepartment().getDepartmentId());
@@ -110,13 +150,18 @@ public class EmployeeServiceImpl implements EmployeeService{
 			
 			for(Employee employee : employees) {
 				
-				 GetEmployeeDto getEmployeeDto = modelMapper.map(employee, GetEmployeeDto.class);
+				if(employee.getEmployeeOrAdmin() != EmployeeOrAdmin.ADMIN) {
+				
+					GetEmployeeDto getEmployeeDto = modelMapper.map(employee, GetEmployeeDto.class);
+					 
+					getEmployeeDto.setDepartmentId(employee.getDepartment().getDepartmentId());
+					getEmployeeDto.setDepartmentName(employee.getDepartment().getDepartmentName());
+					
+					dtoList.add(getEmployeeDto);
+					
+					
+				}
 				 
-				 getEmployeeDto.setDepartmentId(employee.getDepartment().getDepartmentId());
-				 getEmployeeDto.setDepartmentName(employee.getDepartment().getDepartmentName());
-				
-				dtoList.add(getEmployeeDto);
-				
 				
 			}
 			
@@ -131,6 +176,10 @@ public class EmployeeServiceImpl implements EmployeeService{
 		
 		Employee employee = employeeRepo.findById(employeeId)
 				                        .orElseThrow(() -> new EmployeeException("employee does not exist with this employeeId"));
+		
+		if(employee.getEmployeeOrAdmin() != EmployeeOrAdmin.EMPLOYEE)
+					throw new EmployeeException("Employee does not exist with this Id...");
+
 		
 		employee.setRole(role);
 		Employee afterRoleObject = employeeRepo.save(employee);
@@ -152,6 +201,10 @@ public class EmployeeServiceImpl implements EmployeeService{
 		Employee employee = employeeRepo.findById(employeeId)
 									    .orElseThrow(() -> new EmployeeException("employee does not exist with this employeeId"));
 
+		if(employee.getEmployeeOrAdmin() != EmployeeOrAdmin.EMPLOYEE)
+				throw new EmployeeException("Employee does not exist with this Id...");
+
+		
 		employee.setSalary(salary);
 		Employee afterSalary = employeeRepo.save(employee);
 		
@@ -173,6 +226,10 @@ public class EmployeeServiceImpl implements EmployeeService{
 		
 		Employee employee = employeeRepo.findById(employeeId)
 									    .orElseThrow(() -> new EmployeeException("Employee does not exist with this employee id"));
+		
+		if(employee.getEmployeeOrAdmin() != EmployeeOrAdmin.EMPLOYEE)
+								throw new EmployeeException("Employee does not exist with this Id...");
+
 		
 		Department department = departmentRepo.findById(departmentId)
 					  						  .orElseThrow(() -> new DepartmentException("Department does not exist with this department id"));
@@ -200,6 +257,10 @@ public class EmployeeServiceImpl implements EmployeeService{
 		Employee employee = employeeRepo.findById(employeeId)
 										.orElseThrow(() -> new EmployeeException("employee does not exist with this employee id"));		
 		
+		if(employee.getEmployeeOrAdmin() != EmployeeOrAdmin.EMPLOYEE)
+						throw new EmployeeException("Employee does not exist with this Id...");
+
+		
 		employeeRepo.delete(employee);
 		
 		GetEmployeeDto getEmployeeDto = modelMapper.map(employee, GetEmployeeDto.class);
@@ -211,6 +272,12 @@ public class EmployeeServiceImpl implements EmployeeService{
 		
 	}
 
+
+
+
+	
+
+	
 	
 	
 	

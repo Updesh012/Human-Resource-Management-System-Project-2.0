@@ -4,14 +4,20 @@ import java.util.List;
 
 import com.masai.Enum.Role;
 import com.masai.dto.AddEmployeeDto;
+import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.GetEmployeeDto;
+import com.masai.dto.LoginDto;
 import com.masai.exception.DepartmentException;
 import com.masai.exception.EmployeeException;
 import com.masai.model.Employee;
 
 public interface EmployeeService {
+	
+	
 
 	public AddEmployeeDto addEmployee(Integer departmentId,Employee employee) throws DepartmentException;
+	
+	public AuthenticatedResponseDto login(LoginDto loginDto);
 	
 	public GetEmployeeDto getEmployeeByEmpId(Integer employeeId) throws EmployeeException;
 	
