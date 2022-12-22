@@ -44,7 +44,7 @@ public class MySecurityConfig {
         .sessionCreationPolicy(STATELESS)
         .and()
         .authorizeRequests()
-        .antMatchers("/admin/login","/employee/login")
+        .antMatchers("/admin/login","/employee/login","/admin/register")
         .permitAll()
         .antMatchers("/admin/**")
         .hasAuthority("ADMIN")

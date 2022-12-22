@@ -1,6 +1,7 @@
 package com.masai.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -63,13 +64,14 @@ public class AdminController {
 	 * 
 	 * */
 	
-	@PostMapping("/register")
-	public void addAdmin() {
+	@GetMapping("/register")
+	public ResponseEntity<String> addAdmin() {
 		
-		Employee adminObj = employeeRepo.findByUserName("admin1").get();
-		
-		if(adminObj == null) {
+		Optional<Employee> opt = employeeRepo.findByUserName("admin1");
+
+		if(!opt.isPresent()) {
 			// first admin is hardcoded...
+
 			Employee admin = new Employee();
 			admin.setName("admin");
 			admin.setUserName("admin1");
@@ -81,6 +83,7 @@ public class AdminController {
 			employeeRepo.save(admin);
 		}
 		
+		return new ResponseEntity<String>("admin has been registered",HttpStatus.CREATED);
 	}
 
 	// admin login resource

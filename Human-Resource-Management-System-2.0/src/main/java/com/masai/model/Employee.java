@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -89,6 +90,11 @@ public class Employee {
 	@OneToMany(cascade = CascadeType.ALL,mappedBy = "employee",fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Leave> leaves = new ArrayList<>();
+	
+	
+	@ManyToMany(cascade = CascadeType.ALL,mappedBy = "employees")
+	@JsonIgnore
+	private List<Work> works = new ArrayList<>();
 	
 	
 }
