@@ -1,8 +1,10 @@
 package com.masai.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +143,307 @@ public class WorkServiceImpl implements WorkService{
 		workRepo.save(dto.getWork());
 		
 		return "Work has been assigned...";
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllWorks() throws WorkException {
+		
+		List<Work> works = workRepo.findAll();
+		
+		if(works.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : works) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllIndividualWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> individualWorks = allWorks.stream()
+											 .filter((w) -> w.getWorkType() == WorkType.INDIVIDUAL)
+											 .collect(Collectors.toList());
+		
+		if(individualWorks.isEmpty()) throw new WorkException("No works found...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : individualWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+		
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllGroupWorks() throws WorkException {
+	
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> GroupWorks = allWorks.stream()
+										.filter((w) -> w.getWorkType() == WorkType.GROUP)
+										.collect(Collectors.toList());
+		
+		if(GroupWorks.isEmpty()) throw new WorkException("No works found...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : GroupWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+		
+		
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllPendingWorks() throws WorkException {
+	
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> pendingWorks = allWorks.stream()
+										  .filter((w) -> w.getStatus() == WorkStatus.PENDING)
+				                          .collect(Collectors.toList());
+
+		
+		
+		if(pendingWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : pendingWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+		
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllIndividualPendingWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> individualPendingWorks = allWorks.stream()
+													.filter((w) -> w.getStatus() == WorkStatus.PENDING && w.getWorkType() == WorkType.INDIVIDUAL)
+													.collect(Collectors.toList());
+
+		
+		
+		if(individualPendingWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : individualPendingWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+		
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllGroupPendingWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> GroupPendingWorks = allWorks.stream()
+													.filter((w) -> w.getStatus() == WorkStatus.PENDING && w.getWorkType() == WorkType.GROUP)
+													.collect(Collectors.toList());
+
+		
+		
+		if(GroupPendingWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : GroupPendingWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+		
+		
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllCompletedWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> CompletedWorks = allWorks.stream()
+										    .filter((w) -> w.getStatus() == WorkStatus.COMPLETED)
+				                            .collect(Collectors.toList());
+
+		
+		
+		if(CompletedWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : CompletedWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+		
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllIndividualCompletedWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> individualCompletedWorks = allWorks.stream()
+													  .filter((w) -> w.getStatus() == WorkStatus.COMPLETED && w.getWorkType() == WorkType.INDIVIDUAL)
+													  .collect(Collectors.toList());
+
+		
+		
+		if(individualCompletedWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : individualCompletedWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllGroupCompletedWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> GroupCompletedWorks = allWorks.stream()
+												 .filter((w) -> w.getStatus() == WorkStatus.COMPLETED && w.getWorkType() == WorkType.GROUP)
+												 .collect(Collectors.toList());
+
+		
+		
+		if(GroupCompletedWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : GroupCompletedWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+		
+		
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllInCompletedWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> inCompletedWorks = allWorks.stream()
+										      .filter((w) -> w.getStatus() == WorkStatus.NOTCOMPLETED)
+				                              .collect(Collectors.toList());
+
+		
+		
+		if(inCompletedWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : inCompletedWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+		
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllIndividualInCompletedWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> individualInCompletedWorks = allWorks.stream()
+													    .filter((w) -> w.getStatus() == WorkStatus.NOTCOMPLETED && w.getWorkType() == WorkType.INDIVIDUAL)
+													    .collect(Collectors.toList());
+
+		
+		
+		if(individualInCompletedWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : individualInCompletedWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
+	}
+
+
+
+	@Override
+	public List<WorkDto> getAllGroupInCompletedWorks() throws WorkException {
+		
+		List<Work> allWorks = workRepo.findAll();
+		
+		List<Work> GroupInCompletedWorks = allWorks.stream()
+												   .filter((w) -> w.getStatus() == WorkStatus.NOTCOMPLETED && w.getWorkType() == WorkType.GROUP)
+												   .collect(Collectors.toList());
+
+		
+		
+		if(GroupInCompletedWorks.isEmpty()) throw new WorkException("No work present...");
+		
+		List<WorkDto> worksDto = new ArrayList<>();
+		
+		for(Work work : GroupInCompletedWorks) {
+			
+			worksDto.add(modelMapper.map(work,WorkDto.class));
+		}
+		
+		return worksDto;
 	}
 	
 	
