@@ -26,17 +26,22 @@ import com.masai.dto.AddEmployeeDto;
 import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.DepartmentDto;
 import com.masai.dto.GetEmployeeDto;
+import com.masai.dto.GroupWorkDto;
 import com.masai.dto.LeaveDto;
 import com.masai.dto.LoginDto;
+import com.masai.dto.WorkDto;
 import com.masai.exception.DepartmentException;
 import com.masai.exception.EmployeeException;
 import com.masai.exception.LeaveException;
+import com.masai.exception.WorkException;
 import com.masai.model.Department;
 import com.masai.model.Employee;
+import com.masai.model.Work;
 import com.masai.repository.EmployeeRepository;
 import com.masai.service.DepartmentService;
 import com.masai.service.EmployeeService;
 import com.masai.service.LeaveService;
+import com.masai.service.WorkService;
 
 @RestController
 @RequestMapping("/admin")
@@ -57,6 +62,10 @@ public class AdminController {
 	
 	@Autowired
 	private EmployeeRepository employeeRepo;
+	
+	@Autowired
+	private WorkService workService;
+	
 
 	/*
 	 * 
@@ -314,6 +323,145 @@ public class AdminController {
 		
 		return new ResponseEntity<LeaveDto>(dto,HttpStatus.OK);
 	}
+	
+	/*
+	 * 
+	 * work related functionality
+	 * 
+	 * */
+	
+	@PostMapping("/work/{empId}")
+	public ResponseEntity<String> assignIndividualWork(@PathVariable("empId") Integer empId,@RequestBody Work work) throws EmployeeException{
+		
+		String str = workService.assignWork(empId, work);
+		
+		
+		return new ResponseEntity<String>(str,HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/work/{workId}")
+	public ResponseEntity<WorkDto> deleteWork(@PathVariable("workId") Integer workId) throws WorkException{
+		
+		WorkDto dto  = workService.deleteWork(workId);
+		
+		
+		return new ResponseEntity<WorkDto>(dto,HttpStatus.OK);
+	}
+	
+	@PutMapping("/work/{workId}")
+	public ResponseEntity<WorkDto> updateWork(@PathVariable("workId") Integer workId,@RequestBody Work work) throws WorkException{
+		
+		WorkDto dto = workService.updateWork(workId, work);
+		
+		
+		return new ResponseEntity<WorkDto>(dto,HttpStatus.OK);
+	}
+	
+	@PostMapping("/work")
+	public ResponseEntity<String> assignGroupWork(@RequestBody GroupWorkDto dto) throws EmployeeException{
+		
+		String str = workService.groupWork(dto);
+		
+		
+		return new ResponseEntity<String>(str,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allWorks")
+	public ResponseEntity<List<WorkDto>> getAllWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allIndividualWorks")
+	public ResponseEntity<List<WorkDto>> getAllIndividualWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllIndividualWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allGroupWorks")
+	public ResponseEntity<List<WorkDto>> getAllGroupWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllGroupWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allPendingWorks")
+	public ResponseEntity<List<WorkDto>> getAllPendingWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllPendingWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allIndividualPendingWorks")
+	public ResponseEntity<List<WorkDto>> getAllIndividualPendingWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllIndividualPendingWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allGroupPendingWorks")
+	public ResponseEntity<List<WorkDto>> getAllGroupPendingWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllGroupPendingWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allCompletedWorks")
+	public ResponseEntity<List<WorkDto>> getAllCompletedWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllCompletedWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allIndividualCompletedWorks")
+	public ResponseEntity<List<WorkDto>> getAllIndividualCompletedWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllIndividualCompletedWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allGroupCompletedWorks")
+	public ResponseEntity<List<WorkDto>> getAllGroupCompletedWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllGroupCompletedWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allInCompletedWorks")
+	public ResponseEntity<List<WorkDto>> getAllInCompletedWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllInCompletedWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allIndividualInCompletedWorks")
+	public ResponseEntity<List<WorkDto>> getAllIndividualInCompletedWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllIndividualInCompletedWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/allGroupInCompletedWorks")
+	public ResponseEntity<List<WorkDto>> getAllGroupInCompletedWorks() throws WorkException{
+		
+		List<WorkDto> dtos = workService.getAllGroupInCompletedWorks();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
+	
 	
 
 }
