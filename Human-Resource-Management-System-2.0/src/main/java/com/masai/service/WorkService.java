@@ -1,5 +1,6 @@
 package com.masai.service;
 
+import com.masai.dto.GroupWorkDto;
 import com.masai.dto.WorkDto;
 import com.masai.exception.EmployeeException;
 import com.masai.exception.WorkException;
@@ -12,5 +13,7 @@ public interface WorkService {
 	public WorkDto deleteWork(Integer workId) throws WorkException;
 	
 	public WorkDto updateWork(Integer workId,Work work) throws WorkException;
+	
+	public String groupWork(GroupWorkDto dto) throws EmployeeException;
 	
 }

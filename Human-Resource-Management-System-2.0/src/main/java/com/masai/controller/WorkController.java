@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.masai.dto.GroupWorkDto;
 import com.masai.dto.WorkDto;
 import com.masai.exception.EmployeeException;
 import com.masai.exception.WorkException;
@@ -51,7 +52,14 @@ public class WorkController {
 		return new ResponseEntity<WorkDto>(dto,HttpStatus.OK);
 	}
 	
-	
+	@PostMapping("/work")
+	public ResponseEntity<String> assignGroupWork(@RequestBody GroupWorkDto dto) throws EmployeeException{
+		
+		String str = workService.groupWork(dto);
+		
+		
+		return new ResponseEntity<String>(str,HttpStatus.OK);
+	}
 	
 	
 	
