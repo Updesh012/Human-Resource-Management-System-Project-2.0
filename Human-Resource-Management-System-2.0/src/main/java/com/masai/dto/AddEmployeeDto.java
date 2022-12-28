@@ -35,7 +35,6 @@ public class AddEmployeeDto {
 	private String email;
 	
 	
-	private String password;
 	
 	@Enumerated(EnumType.STRING)
 	private EmployeeOrAdmin EmployeeOrAdmin;

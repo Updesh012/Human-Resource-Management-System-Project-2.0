@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.masai.dto.AuthenticatedResponseDto;
+import com.masai.dto.GetEmployeeDto;
 import com.masai.dto.LeaveDto;
 import com.masai.dto.LoginDto;
+import com.masai.dto.UpdateEmployeeDto;
 import com.masai.dto.WorkDto;
 import com.masai.exception.AddressException;
 import com.masai.exception.EmployeeException;
@@ -60,6 +62,28 @@ public class EmployeeController {
 		AuthenticatedResponseDto authenticatedResponseDto = employeeService.login(loginDto);
 		
 		return new ResponseEntity<AuthenticatedResponseDto>(authenticatedResponseDto,HttpStatus.OK);
+	}
+	
+	/*
+	 * 
+	 * Profile related resources
+	 * 
+	 * */
+	
+	@GetMapping("/viewProfile")
+	public ResponseEntity<GetEmployeeDto> viewProfile() {
+
+		GetEmployeeDto getEmployeeDto = employeeService.viewProfile();
+
+		return new ResponseEntity<GetEmployeeDto>(getEmployeeDto, HttpStatus.OK);
+	}
+	
+	@PutMapping("/updateProfile")
+	public ResponseEntity<GetEmployeeDto> updateProfile(@RequestBody UpdateEmployeeDto dto) {
+
+		GetEmployeeDto getEmployeeDto = employeeService.updateEmployee(dto);
+
+		return new ResponseEntity<GetEmployeeDto>(getEmployeeDto, HttpStatus.OK);
 	}
 	
 	/*

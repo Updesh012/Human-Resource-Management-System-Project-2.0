@@ -19,6 +19,7 @@ import com.masai.dto.AddEmployeeDto;
 import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.GetEmployeeDto;
 import com.masai.dto.LoginDto;
+import com.masai.dto.UpdateEmployeeDto;
 import com.masai.exception.DepartmentException;
 import com.masai.exception.EmployeeException;
 import com.masai.model.Department;
@@ -269,6 +270,52 @@ public class EmployeeServiceImpl implements EmployeeService{
 		getEmployeeDto.setDepartmentName(employee.getDepartment().getDepartmentName());
 		
 		return getEmployeeDto; 
+		
+	}
+
+
+
+
+	@Override
+	public GetEmployeeDto viewProfile() {
+		
+		Employee employee = getEmployee();
+		
+		return modelMapper.map(employee, GetEmployeeDto.class);
+		
+	}
+
+
+	@Override
+	public GetEmployeeDto updateEmployee(UpdateEmployeeDto dto) {
+		
+		Employee employee = getEmployee();
+		
+		employee.setName(dto.getName());
+		employee.setEmail(dto.getEmail());
+		employee.setGender(dto.getGender());
+		employee.setDateOfBirth(dto.getDateOfBirth());
+		
+		Employee newEmployee = employeeRepo.save(employee);
+		
+		return modelMapper.map(newEmployee,GetEmployeeDto.class);
+		
+	}
+
+	
+	
+
+	@Override
+	public Employee getEmployee() {
+		
+		Object o = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		UserDetails userDetails = (UserDetails)o;
+		
+		String username = userDetails.getUsername();
+		
+		return employeeRepo.findByUserName(username).orElseThrow(() -> new RuntimeException("user does not exist")); 
+		
 		
 	}
 
