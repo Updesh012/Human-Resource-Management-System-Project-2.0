@@ -33,9 +33,8 @@
 * Employees can change the status of work <br>
 
 # ER Diagram
-<div id="header" align="center">
-  <img src="file:///C:/Users/ASUS/Desktop/Masai%20java/Human-Resource-Management-System-Project/Human-Resource-Management-System-2.0/src/main/java/com/masai/images/hrms-2.0.png
-" width="80%"/>
-</div>
+
+ <img src="https://photos.google.com/search/_tra_/photo/AF1QipNQOKOE9RrM8gjuW2vZ4m78iAJ2vaUTq9r5UMNd" width="80%"/>
+
 
 
