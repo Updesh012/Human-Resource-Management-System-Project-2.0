@@ -34,7 +34,7 @@
 
 # ER Diagram
 <div id="header" align="center">
-  <img src="https://github.com/Updesh012/Human-Resource-Management-System-Project-2.0/blob/main/Human-Resource-Management-System-2.0/src/main/java/com/masai/images/hrms-2.0.png
+  <img src="file:///C:/Users/ASUS/Desktop/Masai%20java/Human-Resource-Management-System-Project/Human-Resource-Management-System-2.0/src/main/java/com/masai/images/hrms-2.0.png
 " width="80%"/>
 </div>
 
