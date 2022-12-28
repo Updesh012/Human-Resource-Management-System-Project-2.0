@@ -19,14 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.LeaveDto;
 import com.masai.dto.LoginDto;
+import com.masai.dto.WorkDto;
 import com.masai.exception.AddressException;
 import com.masai.exception.EmployeeException;
 import com.masai.exception.LeaveException;
+import com.masai.exception.WorkException;
 import com.masai.model.Address;
 import com.masai.model.Leave;
 import com.masai.service.AddressService;
 import com.masai.service.EmployeeService;
 import com.masai.service.LeaveService;
+import com.masai.service.WorkService;
 
 @RestController
 @RequestMapping("/employee")
@@ -40,6 +43,9 @@ public class EmployeeController {
 	
 	@Autowired
 	private LeaveService leaveService;
+	
+	@Autowired
+	private WorkService workService;
 	
 	/*
 	 * 
@@ -150,10 +156,28 @@ public class EmployeeController {
 		
 		return new ResponseEntity<List<LeaveDto>>(dtos,HttpStatus.OK);
 	}
+	
+	/*
+	 * 
+	 * work related Resources
+	 * 
+	 * */
 
+	@GetMapping("/works")
+	public ResponseEntity<List<WorkDto>> getAllWorks() throws EmployeeException,WorkException{
+		
+		List<WorkDto> dtos = workService.getAllEmployeeWork();
+		
+		return new ResponseEntity<List<WorkDto>>(dtos,HttpStatus.OK);
+	}
 	
-	
-	
+	@GetMapping("/changeStatus/{id}")
+	public ResponseEntity<String> changeWorkStatus(@PathVariable("id") Integer workId) throws EmployeeException,WorkException{
+		
+		String str = workService.changeStatusToCompleted(workId);
+		
+		return new ResponseEntity<String>(str,HttpStatus.OK);
+	}
 	
 	
 	

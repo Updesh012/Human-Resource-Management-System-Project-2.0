@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.masai.Enum.EmployeeOrAdmin;
@@ -46,6 +48,7 @@ public class WorkServiceImpl implements WorkService{
 		// setting the others values
 		work.setStatus(WorkStatus.PENDING);
 		work.setWorkType(WorkType.INDIVIDUAL);
+		work.setLeaderId(empId);
 		
 		employee.getWorks().add(work);
 		work.getEmployees().add(employee);
@@ -88,6 +91,7 @@ public class WorkServiceImpl implements WorkService{
 		}
 		work.setStartDate(workObj.getStartDate());
 		work.setWorkType(workObj.getWorkType());
+		work.setLeaderId(workObj.getLeaderId());
 		
 		// here I am not using casCade on work side that's why we have to set the employee in work side
 		List<Employee> employees = workObj.getEmployees();
@@ -115,6 +119,9 @@ public class WorkServiceImpl implements WorkService{
 			if(opt.get().getEmployeeOrAdmin() == EmployeeOrAdmin.ADMIN) throw new EmployeeException("Please pass valid employees ID");
 		}
 		
+		// here I am checking that leader Is belongs to list of employees id or Not
+		if(!employeesId.contains(dto.getLeaderId()))throw new EmployeeException("Please Pass valid leader id") ;
+		
 		// here I am using hashmap for checking the frequency of employee id 
 		// if frequecy of any employee Id is > 1 means that employee present more than one times in list
 		// and we can not assign the same work more than one times to same employee.
@@ -132,6 +139,7 @@ public class WorkServiceImpl implements WorkService{
 		// setting some other details
 		dto.getWork().setWorkType(WorkType.GROUP);
 		dto.getWork().setStatus(WorkStatus.PENDING);
+		dto.getWork().setLeaderId(dto.getLeaderId());
 		
 		for(int id : employeesId) {
 			Employee employee = employeeRepo.findById(id).get();
@@ -445,9 +453,89 @@ public class WorkServiceImpl implements WorkService{
 		
 		return worksDto;
 	}
+
+
+
+	@Override
+	public List<WorkDto> getAllEmployeeWork() throws EmployeeException, WorkException {
+		
+		Employee employee = getEmployee();
+		
+		List<Work> works = employee.getWorks();
+		
+		if(works.isEmpty()) throw new WorkException("No work found...");
+		
+		List<WorkDto> workDtos = new ArrayList<>();
+		
+		// here I am checking for those work in which current date is greater than their deadline and I am setting
+		// NOTCOMPLETED from those work which has the status PENDING
+		for(Work work : works) {
+			
+			Integer dayDiff = workRepo.getDaysDiff(work.getWorkId());
+			if(dayDiff < 0 && work.getStatus() == WorkStatus.PENDING) {
+				work.setStatus(WorkStatus.NOTCOMPLETED);
+
+				workRepo.save(work);
+			}
+			
+			WorkDto dto = modelMapper.map(work, WorkDto.class);
+			workDtos.add(dto);
+		}
+		
+		
+		return workDtos;
+	}
+	
+	@Override
+	public String changeStatusToCompleted(Integer workId) throws EmployeeException, WorkException {
+	
+		Employee employee = getEmployee();
+		
+		workRepo.findById(workId).orElseThrow(() -> new WorkException("No work present with this work ID"));
+		
+		// here I am checking whether this work is associated with current employee or not 
+		List<Work> works = employee.getWorks()
+								   .stream()
+								   .filter((w) -> w.getWorkId() == workId)
+								   .collect(Collectors.toList());
+		
+		if(works.isEmpty()) throw new WorkException("No work present with this work ID");
+		
+		Work work = works.get(0);
+		
+		// Here I am checking whether Employee is Leader or not because Only leader can change the workStatus
+		if(employee.getEmployeeId() != work.getLeaderId())
+						throw new EmployeeException("You are not the Leader, you can not change the status...");
+		
+		if(work.getStatus() == WorkStatus.NOTCOMPLETED)
+						throw new WorkException("Deadline Has passed, now you can not change status...");
+		
+		work.setStatus(WorkStatus.COMPLETED);
+		workRepo.save(work);
+		
+		return "Marked as Completed...";
+	}
 	
 	
 	
+	
+	
+	@Override
+	public Employee getEmployee() {
+		
+		Object o = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		UserDetails userDetails = (UserDetails)o;
+		
+		String username = userDetails.getUsername();
+		
+		return employeeRepo.findByUserName(username).orElseThrow(() -> new RuntimeException("user does not exist")); 
+		
+		
+	}
+
+
+
 	
 	
 }
