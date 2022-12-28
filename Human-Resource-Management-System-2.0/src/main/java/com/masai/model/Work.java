@@ -41,6 +41,9 @@ public class Work {
 	
 	private String description;
 	
+	@JsonIgnore
+	private Integer leaderId;
+	
 	@CreationTimestamp
 	@JsonIgnore
 	@Column(updatable =  false)

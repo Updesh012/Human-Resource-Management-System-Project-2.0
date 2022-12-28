@@ -6,6 +6,7 @@ import com.masai.dto.GroupWorkDto;
 import com.masai.dto.WorkDto;
 import com.masai.exception.EmployeeException;
 import com.masai.exception.WorkException;
+import com.masai.model.Employee;
 import com.masai.model.Work;
 
 public interface WorkService {
@@ -17,6 +18,12 @@ public interface WorkService {
 	public WorkDto updateWork(Integer workId,Work work) throws WorkException;
 	
 	public String groupWork(GroupWorkDto dto) throws EmployeeException;
+	
+	public String changeStatusToCompleted(Integer workId) throws EmployeeException, WorkException;
+	
+	public Employee getEmployee();
+	
+	public List<WorkDto> getAllEmployeeWork() throws EmployeeException,WorkException;
 	
 	public List<WorkDto> getAllWorks() throws WorkException;
 	

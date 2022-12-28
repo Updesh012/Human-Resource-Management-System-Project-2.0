@@ -19,6 +19,6 @@ public class GroupWorkDto {
 	
 	private Work work;
 	
-	
+	private Integer leaderId;
 	
 }

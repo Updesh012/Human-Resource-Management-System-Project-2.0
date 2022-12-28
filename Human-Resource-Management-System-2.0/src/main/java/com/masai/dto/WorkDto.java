@@ -29,7 +29,7 @@ public Integer workId;
 	
 	private String description;
 	
-	
+	private Integer leaderId;
 	
 	private LocalDate startDate;
 	
