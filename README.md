@@ -34,7 +34,7 @@
 
 # ER Diagram
 
- <img src="https://photos.google.com/search/_tra_/photo/AF1QipNQOKOE9RrM8gjuW2vZ4m78iAJ2vaUTq9r5UMNd" width="80%"/>
+ <img src="https://github.com/Updesh012/Human-Resource-Management-System-Project-2.0/blob/main/Human-Resource-Management-System-2.0/src/main/java/com/masai/images/hrms-2.0.png" width="80%"/>
 
 
 
