@@ -21,10 +21,12 @@ import com.masai.dto.GetEmployeeDto;
 import com.masai.dto.LeaveDto;
 import com.masai.dto.LoginDto;
 import com.masai.dto.UpdateEmployeeDto;
+import com.masai.dto.UpdatePasswordDto;
 import com.masai.dto.WorkDto;
 import com.masai.exception.AddressException;
 import com.masai.exception.EmployeeException;
 import com.masai.exception.LeaveException;
+import com.masai.exception.PasswordException;
 import com.masai.exception.WorkException;
 import com.masai.model.Address;
 import com.masai.model.Leave;
@@ -84,6 +86,14 @@ public class EmployeeController {
 		GetEmployeeDto getEmployeeDto = employeeService.updateEmployee(dto);
 
 		return new ResponseEntity<GetEmployeeDto>(getEmployeeDto, HttpStatus.OK);
+	}
+	
+	@PutMapping("/updatePassword")
+	public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordDto dto) throws PasswordException{
+		
+		String message = employeeService.updatePassword(dto);
+		
+		return new ResponseEntity<String>(message,HttpStatus.OK);
 	}
 	
 	/*
