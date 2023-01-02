@@ -92,7 +92,6 @@ INDEX VERSION 1.131+C:\Users\ASUS\Desktop\Masai java\Human-Resource-Management-S
 3971721366.index
 1689741332.index
 2106891951.index
-3783302277.index
 3053720102.index
 4217846543.index
 1489293591.index
@@ -109,7 +108,6 @@ INDEX VERSION 1.131+C:\Users\ASUS\Desktop\Masai java\Human-Resource-Management-S
 3395537206.index
 1567333482.index
 3558892196.index
-1865797976.index
 1965884018.index
 44848409.index
 1525745899.index
