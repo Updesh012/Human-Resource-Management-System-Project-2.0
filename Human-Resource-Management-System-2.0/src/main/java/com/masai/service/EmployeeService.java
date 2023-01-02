@@ -8,8 +8,10 @@ import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.GetEmployeeDto;
 import com.masai.dto.LoginDto;
 import com.masai.dto.UpdateEmployeeDto;
+import com.masai.dto.UpdatePasswordDto;
 import com.masai.exception.DepartmentException;
 import com.masai.exception.EmployeeException;
+import com.masai.exception.PasswordException;
 import com.masai.model.Employee;
 
 public interface EmployeeService {
@@ -19,6 +21,8 @@ public interface EmployeeService {
 	public Employee getEmployee();
 	
 	public GetEmployeeDto updateEmployee(UpdateEmployeeDto dto);
+	
+	public String updatePassword(UpdatePasswordDto dto) throws PasswordException;
 
 	public AddEmployeeDto addEmployee(Integer departmentId,Employee employee) throws DepartmentException;
 	
@@ -37,5 +41,7 @@ public interface EmployeeService {
 	public GetEmployeeDto changeEmployeeDepartment(Integer employeeId,Integer newDepartmentId) throws EmployeeException,DepartmentException;
 	
 	public GetEmployeeDto deleteEmployee(Integer employeeId) throws EmployeeException;
+
+	
 	
 }

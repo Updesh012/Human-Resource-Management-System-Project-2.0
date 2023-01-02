@@ -20,8 +20,10 @@ import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.GetEmployeeDto;
 import com.masai.dto.LoginDto;
 import com.masai.dto.UpdateEmployeeDto;
+import com.masai.dto.UpdatePasswordDto;
 import com.masai.exception.DepartmentException;
 import com.masai.exception.EmployeeException;
+import com.masai.exception.PasswordException;
 import com.masai.model.Department;
 import com.masai.model.Employee;
 import com.masai.repository.DepartmentRepository;
@@ -303,6 +305,33 @@ public class EmployeeServiceImpl implements EmployeeService{
 	}
 
 	
+	@Override
+	public String updatePassword(UpdatePasswordDto dto) throws PasswordException {
+		
+		
+		
+		Employee employee = getEmployee();
+		
+		
+		
+		
+		if(!dto.getNewPassword().equals(dto.getConfirmPassword()))
+						throw new PasswordException("confirm password and new password need to be same");
+		
+		if(encoder.matches(dto.getNewPassword(), employee.getPassword()))
+						throw new PasswordException("New password need to be different");
+		
+		Employee emp = employeeRepo.findByPassword(encoder.encode(dto.getNewPassword()));
+		
+		if(emp != null)
+				throw new PasswordException("this password is not available");
+		
+		employee.setPassword(encoder.encode(dto.getNewPassword()));
+		employeeRepo.save(employee);
+		
+		return "Password has been changed";
+	}
+	
 	
 
 	@Override
@@ -310,14 +339,24 @@ public class EmployeeServiceImpl implements EmployeeService{
 		
 		Object o = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
+		System.out.println(o);
+		if(o.equals("anonymousUser")) throw new RuntimeException("Please login first...");
+		
 		UserDetails userDetails = (UserDetails)o;
 		
+		
 		String username = userDetails.getUsername();
+		
 		
 		return employeeRepo.findByUserName(username).orElseThrow(() -> new RuntimeException("user does not exist")); 
 		
 		
 	}
+
+
+
+
+
 
 
 
