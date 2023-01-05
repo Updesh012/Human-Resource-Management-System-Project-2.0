@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.masai.Enum.EmployeeOrAdmin;
 import com.masai.Enum.Role;
 import com.masai.dto.AddEmployeeDto;
+import com.masai.dto.AdminDto;
 import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.GetEmployeeDto;
 import com.masai.dto.LoginDto;
@@ -332,6 +333,33 @@ public class EmployeeServiceImpl implements EmployeeService{
 		return "Password has been changed";
 	}
 	
+	@Override
+	public AdminDto viewProfileAdmin() {
+		
+		Employee admin = getEmployee();
+		
+		return modelMapper.map(admin,AdminDto.class);
+	}
+	
+	
+
+	@Override
+	public AdminDto registerAdmin(Employee admin) {
+		
+		Employee savedAdmin = employeeRepo.save(admin);
+		
+		admin.setEmployeeId(savedAdmin.getEmployeeId());
+		admin.setUserName(admin.getName() + savedAdmin.getEmployeeId());
+		admin.setPassword(encoder.encode(admin.getName() + savedAdmin.getEmployeeId()));
+		admin.setEmployeeOrAdmin(EmployeeOrAdmin.ADMIN);
+		
+		Employee completeSavedAdmin = employeeRepo.save(admin);
+		
+		return modelMapper.map(completeSavedAdmin, AdminDto.class);
+	}
+
+
+	
 	
 
 	@Override
@@ -353,6 +381,13 @@ public class EmployeeServiceImpl implements EmployeeService{
 		
 	}
 
+
+
+
+
+
+
+	
 
 
 
