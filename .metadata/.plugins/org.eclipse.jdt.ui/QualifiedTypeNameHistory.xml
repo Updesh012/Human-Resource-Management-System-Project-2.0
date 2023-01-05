@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-    <fullyQualifiedTypeName name="org.springframework.security.crypto.password.PasswordEncoder"/>
-    <fullyQualifiedTypeName name="com.masai.service.DepartmentService"/>
     <fullyQualifiedTypeName name="com.masai.service.AddressService"/>
     <fullyQualifiedTypeName name="com.masai.exception.AddressException"/>
     <fullyQualifiedTypeName name="com.masai.exception.LeaveException"/>
@@ -44,7 +41,6 @@
     <fullyQualifiedTypeName name="com.masai.Enum.WorkStatus"/>
     <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="java.util.List"/>
-    <fullyQualifiedTypeName name="org.springframework.http.ResponseEntity"/>
     <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.GetMapping"/>
     <fullyQualifiedTypeName name="java.util.stream.Collectors"/>
     <fullyQualifiedTypeName name="com.masai.Enum.WorkType"/>
@@ -54,10 +50,14 @@
     <fullyQualifiedTypeName name="com.masai.service.WorkService"/>
     <fullyQualifiedTypeName name="com.masai.exception.WorkException"/>
     <fullyQualifiedTypeName name="com.masai.exception.EmployeeException"/>
+    <fullyQualifiedTypeName name="com.masai.dto.UpdateEmployeeDto"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.RequestBody"/>
     <fullyQualifiedTypeName name="lombok.Getter"/>
     <fullyQualifiedTypeName name="lombok.Setter"/>
     <fullyQualifiedTypeName name="lombok.AllArgsConstructor"/>
     <fullyQualifiedTypeName name="lombok.NoArgsConstructor"/>
-    <fullyQualifiedTypeName name="com.masai.dto.UpdateEmployeeDto"/>
-    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.RequestBody"/>
+    <fullyQualifiedTypeName name="org.springframework.http.ResponseEntity"/>
+    <fullyQualifiedTypeName name="com.masai.dto.UpdatePasswordDto"/>
+    <fullyQualifiedTypeName name="com.masai.exception.PasswordException"/>
+    <fullyQualifiedTypeName name="java.lang.RuntimeException"/>
 </qualifiedTypeNameHistroy>

@@ -23,16 +23,19 @@ import com.masai.Enum.EmployeeOrAdmin;
 import com.masai.Enum.LeaveStatus;
 import com.masai.Enum.Role;
 import com.masai.dto.AddEmployeeDto;
+import com.masai.dto.AdminDto;
 import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.DepartmentDto;
 import com.masai.dto.GetEmployeeDto;
 import com.masai.dto.GroupWorkDto;
 import com.masai.dto.LeaveDto;
 import com.masai.dto.LoginDto;
+import com.masai.dto.UpdatePasswordDto;
 import com.masai.dto.WorkDto;
 import com.masai.exception.DepartmentException;
 import com.masai.exception.EmployeeException;
 import com.masai.exception.LeaveException;
+import com.masai.exception.PasswordException;
 import com.masai.exception.WorkException;
 import com.masai.model.Department;
 import com.masai.model.Employee;
@@ -69,7 +72,7 @@ public class AdminController {
 
 	/*
 	 * 
-	 * Admin Login
+	 * Admin Login and profile related resources
 	 * 
 	 * */
 	
@@ -94,6 +97,10 @@ public class AdminController {
 		
 		return new ResponseEntity<String>("admin has been registered",HttpStatus.CREATED);
 	}
+	
+	
+	
+	
 
 	// admin login resource
 	@PostMapping("/login")
@@ -103,6 +110,35 @@ public class AdminController {
 
 		return new ResponseEntity<AuthenticatedResponseDto>(authenticatedResponseDto, HttpStatus.OK);
 	}
+	
+	
+	@GetMapping("/viewProfile")
+	public ResponseEntity<AdminDto> viewProfile() {
+
+		AdminDto getAdminDto = employeeService.viewProfileAdmin();
+
+		return new ResponseEntity<AdminDto>(getAdminDto, HttpStatus.OK);
+	}
+	
+	@PostMapping("/registerAdmin")
+	public ResponseEntity<AdminDto> registerAdmin(@RequestBody Employee employee) {
+
+		AdminDto getAdminDto = employeeService.registerAdmin(employee);
+
+		return new ResponseEntity<AdminDto>(getAdminDto, HttpStatus.OK);
+	}
+	
+	
+	@PutMapping("/updatePassword")
+	public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordDto dto) throws PasswordException{
+		
+		String message = employeeService.updatePassword(dto);
+		
+		return new ResponseEntity<String>(message,HttpStatus.OK);
+	}
+
+	
+	
 	
 	/*
 	 * 

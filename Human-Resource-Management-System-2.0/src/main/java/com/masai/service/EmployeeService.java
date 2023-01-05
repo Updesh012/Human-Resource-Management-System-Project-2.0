@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.masai.Enum.Role;
 import com.masai.dto.AddEmployeeDto;
+import com.masai.dto.AdminDto;
 import com.masai.dto.AuthenticatedResponseDto;
 import com.masai.dto.GetEmployeeDto;
 import com.masai.dto.LoginDto;
@@ -19,6 +20,10 @@ public interface EmployeeService {
 	public GetEmployeeDto viewProfile();
 	
 	public Employee getEmployee();
+	
+	public AdminDto viewProfileAdmin();
+	
+	public AdminDto registerAdmin(Employee admin);
 	
 	public GetEmployeeDto updateEmployee(UpdateEmployeeDto dto);
 	
@@ -41,6 +46,10 @@ public interface EmployeeService {
 	public GetEmployeeDto changeEmployeeDepartment(Integer employeeId,Integer newDepartmentId) throws EmployeeException,DepartmentException;
 	
 	public GetEmployeeDto deleteEmployee(Integer employeeId) throws EmployeeException;
+
+	
+
+	
 
 	
 	
